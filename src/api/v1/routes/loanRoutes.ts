@@ -15,7 +15,7 @@ const router: express.Router = express.Router();
 router.post(
   "/",
   authenticate,
-  isAuthorized({ hasRole: ["manager"] }),
+//  isAuthorized({ hasRole: ["manager"] }),
   createLoan
 );
 
@@ -23,7 +23,7 @@ router.post(
 router.get(
   "/",
   authenticate,
-  isAuthorized({ hasRole: ["officer", "manager"] }),
+//  isAuthorized({ hasRole: ["officer", "manager"] }),
   getLoans
 );
 
@@ -31,7 +31,7 @@ router.get(
 router.get(
   "/:id",
   authenticate,
-  isAuthorized({ hasRole: ["officer", "manager"] }),
+//  isAuthorized({ hasRole: ["officer", "manager"] }),
   getLoanById
 );
 
@@ -39,7 +39,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
-  isAuthorized({ hasRole: ["manager"] }),
+//  isAuthorized({ hasRole: ["manager"] }),
   updateLoan
 );
 
@@ -47,7 +47,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
-  isAuthorized({ hasRole: ["admin"] }),
+//  isAuthorized({ hasRole: ["admin"] }),
   deleteLoan
 );
 
