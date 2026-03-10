@@ -7,7 +7,6 @@ import {
   deleteLoan,
 } from "../controllers/loanController";
 import authenticate from "../middleware/authenticate";
-import isAuthorized from "../middleware/authorize";
 
 const router: express.Router = express.Router();
 

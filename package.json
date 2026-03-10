@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/server.ts",
     "test": "jest"
   },
   "jest": {
