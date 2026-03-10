@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import isAuthorized from "../src/api/v1/middleware/authorize";
 import { AuthorizationError } from "../src/api/v1/errors/errors";
 import { AuthorizationOptions } from "..//src/api/v1/models/authorizationOptions";
@@ -23,14 +23,12 @@ describe("Authorization Middleware", () => {
     it("should call next() when user has required role", () => {
         // Arrange
         mockResponse.locals = {
-            uid: "/* user id */", // <-- e.g. 'user123'
-            role: "/* user role with permission */", // <-- e.g. 'admin'
+            uid: "user123",
+            role: "admin",
         };
 
         const options: AuthorizationOptions = {
-            hasRole: [
-                /* array of allowed roles */
-            ], // <-- e.g. ['admin', 'manager']
+            hasRole: ["admin", "manager"],
         };
 
         const middleware = isAuthorized(options);
@@ -49,84 +47,58 @@ describe("Authorization Middleware", () => {
     it("should throw AuthorizationError when role is missing", () => {
         // Arrange
         mockResponse.locals = {
-            uid: "/* user id */", // <-- e.g. 'user123'
+            uid: "user123",
             // No role specified
         };
 
         const options: AuthorizationOptions = {
-            hasRole: [
-                /* array of allowed roles */
-            ], // <-- e.g. ['admin']
+            hasRole: ["admin"],
         };
 
         const middleware = isAuthorized(options);
 
         // Act & Assert
-        expect(() =>
-            middleware(
-                mockRequest as Request,
-                mockResponse as Response,
-                nextFunction
-            )
-        ).toThrow(AuthorizationError);
-
-        expect(() =>
-            middleware(
-                mockRequest as Request,
-                mockResponse as Response,
-                nextFunction
-            )
-        ).toThrow(
-            expect.objectContaining({
-                code: "/* expected error code */", // <-- e.g. 'ROLE_NOT_FOUND'
-            })
+        middleware(
+            mockRequest as Request,
+            mockResponse as Response,
+            nextFunction
         );
 
-        expect(nextFunction).not.toHaveBeenCalled();
+        expect(nextFunction).toHaveBeenCalledWith(expect.any(AuthorizationError));
+        expect(nextFunction).toHaveBeenCalledWith(
+            expect.objectContaining({ code: "ROLE_NOT_FOUND" })
+        );
     });
 
     it("should throw AuthorizationError when user has insufficient role", () => {
         // Arrange
         mockResponse.locals = {
-            uid: "/* user id */", // <-- e.g. 'user123'
-            role: "/* user role without permission */", // <-- e.g. 'user'
+            uid: "user123",
+            role: "user",
         };
 
         const options: AuthorizationOptions = {
-            hasRole: [
-                /* array of required roles */
-            ], // <-- e.g. ['admin']
+            hasRole: ["admin"],
         };
 
         const middleware = isAuthorized(options);
 
         // Act & Assert
-        expect(() =>
-            middleware(
-                mockRequest as Request,
-                mockResponse as Response,
-                nextFunction
-            )
-        ).toThrow(AuthorizationError);
-
-        expect(() =>
-            middleware(
-                mockRequest as Request,
-                mockResponse as Response,
-                nextFunction
-            )
-        ).toThrow(
-            expect.objectContaining({
-                code: "/* expected error code */", // <-- e.g. 'INSUFFICIENT_ROLE'
-            })
+        middleware(
+            mockRequest as Request,
+            mockResponse as Response,
+            nextFunction
         );
 
-        expect(nextFunction).not.toHaveBeenCalled();
+        expect(nextFunction).toHaveBeenCalledWith(expect.any(AuthorizationError));
+        expect(nextFunction).toHaveBeenCalledWith(
+            expect.objectContaining({ code: "INSUFFICIENT_ROLE" })
+        );
     });
 
     it("should call next() when allowSameUser is true and IDs match", () => {
         // Arrange
-        const userId = "/* user id */"; // <-- e.g. 'user123'
+        const userId = "user123";
 
         mockRequest.params = {
             id: userId,
@@ -134,13 +106,11 @@ describe("Authorization Middleware", () => {
 
         mockResponse.locals = {
             uid: userId,
-            role: "/* role that normally wouldn't have access */", // <-- e.g. 'user'
+            role: "user",
         };
 
         const options: AuthorizationOptions = {
-            hasRole: [
-                /* array of roles with higher permission */
-            ], // <-- e.g. ['admin']
+            hasRole: ["admin"],
             allowSameUser: true,
         };
 
