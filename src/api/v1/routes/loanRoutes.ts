@@ -7,38 +7,39 @@ import {
   deleteLoan,
 } from "../controllers/loanController";
 import authenticate from "../middleware/authenticate";
+import isAuthorized from "../middleware/authorize";
 
 const router: express.Router = express.Router();
 
-// Create Loan - Manager only
-router.post(
-  "/",
-  authenticate,
-//  isAuthorized({ hasRole: ["manager"] }),
-  createLoan
-);
-
-// Get All Loans - Officer or Manager can view
+// Get All Loans - Officer, Manager, or Admin can view
 router.get(
   "/",
   authenticate,
-//  isAuthorized({ hasRole: ["officer", "manager"] }),
+  isAuthorized({ hasRole: ["officer", "manager", "admin"] }),
   getLoans
 );
 
-// Get Loan by ID - Officer or Manager can view
+// Get Loan by ID - Officer, Manager, or Admin can view
 router.get(
   "/:id",
   authenticate,
-//  isAuthorized({ hasRole: ["officer", "manager"] }),
+  isAuthorized({ hasRole: ["officer", "manager", "admin"] }),
   getLoanById
 );
 
-// Update Loan - Manager only
+// Create Loan - Manager or Admin only
+router.post(
+  "/",
+  authenticate,
+  isAuthorized({ hasRole: ["manager", "admin"] }),
+  createLoan
+);
+
+// Update Loan - Manager or Admin only
 router.put(
   "/:id",
   authenticate,
-//  isAuthorized({ hasRole: ["manager"] }),
+  isAuthorized({ hasRole: ["manager", "admin"] }),
   updateLoan
 );
 
@@ -46,7 +47,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
-//  isAuthorized({ hasRole: ["admin"] }),
+  isAuthorized({ hasRole: ["admin"] }),
   deleteLoan
 );
 
