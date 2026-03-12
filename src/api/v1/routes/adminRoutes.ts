@@ -3,9 +3,12 @@ import { setCustomClaims } from "../controllers/adminController";
 import authenticate from "../middleware/authenticate";
 import isAuthorized from "../middleware/authorize";
 
-const router: express.Router = express.Router();
+const router = express.Router();
 
-// Only admins can set custom claims
+// Unprotected bootstrap route
+router.post('/admin/setClaims', setCustomClaims);
+
+// Protected route for real admins
 router.post(
     "/setCustomClaims",
     authenticate,

@@ -31,7 +31,7 @@ app.get("/api/v1/health", healthCheck);
 // API Routes
 app.use("/api/v1/loans", loanRoutes);
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/", adminRoutes);
 
 // Global error handling middleware (MUST be applied last)
 app.use(errorHandler);
