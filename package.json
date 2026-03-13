@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "start": "npm run dev",
     "dev": "ts-node src/server.ts",
     "test": "jest"
   },
